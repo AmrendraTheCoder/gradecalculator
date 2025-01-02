@@ -88,7 +88,7 @@ const GradeForm = () => {
         <>
             <div className="max-w-md mx-auto p-6 bg-white rounded-lg outline-dashed outline-slate-400 outline-1 shadow-md">
                 <h2 className="text-2xl font-bold text-center mb-6 text-[#6461ff]">
-                    Semester 1 : Grade Calculator
+                    Enter your Grades : 
                 </h2>
 
                 <form onSubmit={handleCalculate} className="space-y-4">

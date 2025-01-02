@@ -1,10 +1,21 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
+// Define protected routes using a route matcher
 const isProtectedRoute = createRouteMatcher([
-    '/'
-])
+  "/protected(.*)",
+]);
 
-export default clerkMiddleware();
+export default clerkMiddleware(async (auth, req) => {
+  if (isProtectedRoute(req)) {
+    // Check if the user is authenticated by checking for the session cookie
+    const { userId } = await auth.protect(); // This is how to get the userId from the session
+
+    if (!userId) {
+      // If no userId is found, the user is not authenticated
+      return new Response("Unauthorized", { status: 401 });
+    }
+  }
+});
 
 export const config = {
   matcher: [

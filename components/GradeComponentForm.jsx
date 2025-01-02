@@ -1,10 +1,9 @@
 "use client";
 import { useState } from "react";
+import GradeResult from "./GradeResult"; // Import the GradeResult component
 
 const GradeForm = () => {
     const [formData, setFormData] = useState({
-        name: "",
-        number: "",
         grades: {
             code: { grade: "", marks: "" },
             clp: { grade: "", marks: "" },
@@ -15,10 +14,7 @@ const GradeForm = () => {
         },
     });
 
-    const [result, setResult] = useState({
-        showForm: true,
-        cgpa: 0,
-    });
+    const [result, setResult] = useState(null); // State for result
 
     const calculateGradePoints = (grade) => {
         const gradePoints = {
@@ -57,17 +53,8 @@ const GradeForm = () => {
 
         const calculatedCgpa = (totalPoints / totalCredits).toFixed(2);
 
-        setResult({
-            showForm: false,
-            cgpa: calculatedCgpa,
-        });
-    };
-
-    const handleInputChange = (field, value) => {
-        setFormData((prev) => ({
-            ...prev,
-            [field]: value,
-        }));
+        // Pass result to the GradeResult component
+        setResult(calculatedCgpa);
     };
 
     const handleGradeChange = (subject, field, value) => {
@@ -94,52 +81,17 @@ const GradeForm = () => {
 
     const grades = ["A", "AB", "B", "BC", "C", "CD", "D", "F"];
 
-    if (!result.showForm) {
-        return (
-            <div className="max-w-md mx-auto p-8 bg-white rounded-lg shadow-lg">
-                <h2 className="text-3xl font-bold text-center text-blue-600 mb-4">Your Results</h2>
-                <div className="p-6 bg-blue-50 rounded-lg border-2 border-blue-200">
-                    <p className="text-center text-2xl font-bold text-blue-900">
-                        CGPA: {result.cgpa}
-                    </p>
-                </div>
-            </div>
-        );
+    if (result) {
+        return <GradeResult cgpa={result} onReset={() => setResult(null)} />;
     }
 
     return (
-        <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
+        <div className="max-w-md mx-auto p-6 bg-white rounded-lg outline-dashed outline-slate-400 outline-1 shadow-md">
             <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
                 Semester 1 : Grade Calculator
             </h2>
 
             <form onSubmit={handleCalculate} className="space-y-4">
-                {/* Name Field */}
-                <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700">Name:</label>
-                    <input
-                        type="text"
-                        value={formData.name}
-                        onChange={(e) => handleInputChange("name", e.target.value)}
-                        className="w-full p-2 border rounded-md bg-white"
-                        placeholder="Enter your name"
-                        required
-                    />
-                </div>
-
-                {/* Number Field */}
-                <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700">Branch:</label>
-                    <input
-                        type="text"
-                        value={formData.number}
-                        onChange={(e) => handleInputChange("number", e.target.value)}
-                        className="w-full p-2 border rounded-md bg-white"
-                        placeholder="Enter your number"
-                        required
-                    />
-                </div>
-
                 {subjects.map((subject) => (
                     <div key={subject.id} className="space-y-2">
                         <label className="block text-sm font-medium text-gray-700">
@@ -147,7 +99,6 @@ const GradeForm = () => {
                         </label>
 
                         <div className="flex space-x-2">
-                            {/* Grade Dropdown */}
                             <select
                                 value={formData.grades[subject.id].grade}
                                 onChange={(e) =>
@@ -164,7 +115,6 @@ const GradeForm = () => {
                                 ))}
                             </select>
 
-                            {/* Marks Input */}
                             <input
                                 type="number"
                                 value={formData.grades[subject.id].marks}

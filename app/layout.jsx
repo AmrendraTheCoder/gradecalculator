@@ -5,7 +5,7 @@ import {
   ClerkLoaded,
   ClerkLoading,
 } from '@clerk/nextjs'
-import { dark } from '@clerk/themes'
+import { white } from '@clerk/themes'
 
 // components
 import Header from "../components/Header";
@@ -22,7 +22,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <ClerkProvider appearance={{ baseTheme: dark }}>
+    <ClerkProvider appearance={{ baseTheme: white }}>
       <html lang="en">
         <body
           className={jetbrainsMono.variable}

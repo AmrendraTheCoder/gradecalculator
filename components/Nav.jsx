@@ -9,7 +9,7 @@ const links = [
         path: '/',
     },
     {
-        name: 'Grade Calculator',
+        name: 'Grade Predictor',
         path: '/protected',
     },
 ]

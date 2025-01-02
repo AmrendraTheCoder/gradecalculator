@@ -5,12 +5,12 @@ import GradeResult from "./GradeResult"; // Import the GradeResult component
 const GradeForm = () => {
     const [formData, setFormData] = useState({
         grades: {
-            code: { grade: "", marks: "" },
-            clp: { grade: "", marks: "" },
-            pps: { grade: "", marks: "" },
-            be: { grade: "", marks: "" },
-            beLab: { grade: "", marks: "" },
-            tce: { grade: "", marks: "" },
+            code: { grade: "" },
+            clp: { grade: "" },
+            pps: { grade: "" },
+            be: { grade: "" },
+            beLab: { grade: "" },
+            tce: { grade: "" },
         },
     });
 
@@ -57,14 +57,13 @@ const GradeForm = () => {
         setResult(calculatedCgpa);
     };
 
-    const handleGradeChange = (subject, field, value) => {
+    const handleGradeChange = (subject, value) => {
         setFormData((prev) => ({
             ...prev,
             grades: {
                 ...prev.grades,
                 [subject]: {
-                    ...prev.grades[subject],
-                    [field]: value,
+                    grade: value,
                 },
             },
         }));
@@ -86,59 +85,56 @@ const GradeForm = () => {
     }
 
     return (
-        <div className="max-w-md mx-auto p-6 bg-white rounded-lg outline-dashed outline-slate-400 outline-1 shadow-md">
-            <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
-                Semester 1 : Grade Calculator
-            </h2>
+        <>
+            <div className="max-w-md mx-auto p-6 bg-white rounded-lg outline-dashed outline-slate-400 outline-1 shadow-md">
+                <h2 className="text-2xl font-bold text-center mb-6 text-[#6461ff]">
+                    Semester 1 : Grade Calculator
+                </h2>
 
-            <form onSubmit={handleCalculate} className="space-y-4">
-                {subjects.map((subject) => (
-                    <div key={subject.id} className="space-y-2">
-                        <label className="block text-sm font-medium text-gray-700">
-                            {subject.name}
-                        </label>
+                <form onSubmit={handleCalculate} className="space-y-4">
+                    {subjects.map((subject) => (
+                        <div key={subject.id} className="space-y-2">
+                            <label className="block text-sm font-medium text-gray-700">
+                                {subject.name}
+                            </label>
 
-                        <div className="flex space-x-2">
-                            <select
-                                value={formData.grades[subject.id].grade}
-                                onChange={(e) =>
-                                    handleGradeChange(subject.id, "grade", e.target.value)
-                                }
-                                className="w-1/2 p-2 border rounded-md bg-white"
-                                required
-                            >
-                                <option value="">Select Grade</option>
-                                {grades.map((grade) => (
-                                    <option key={grade} value={grade}>
-                                        {grade}
-                                    </option>
-                                ))}
-                            </select>
-
-                            <input
-                                type="number"
-                                value={formData.grades[subject.id].marks}
-                                onChange={(e) =>
-                                    handleGradeChange(subject.id, "marks", e.target.value)
-                                }
-                                className="w-1/2 p-2 border rounded-md bg-white"
-                                placeholder="Enter marks"
-                                min="0"
-                                max="100"
-                                required
-                            />
+                            <div className="flex space-x-2">
+                                <select
+                                    value={formData.grades[subject.id].grade}
+                                    onChange={(e) =>
+                                        handleGradeChange(subject.id, e.target.value)
+                                    }
+                                    className="w-full p-2 border rounded-md bg-white"
+                                    required
+                                >
+                                    <option value="">Select Grade</option>
+                                    {grades.map((grade) => (
+                                        <option key={grade} value={grade}>
+                                            {grade}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    ))}
 
-                <button
-                    type="submit"
-                    className="w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 transition-colors font-medium"
-                >
-                    Calculate SGPA
-                </button>
-            </form>
-        </div>
+                    <button
+                        type="submit"
+                        className="w-full bg-[#4b48ff] text-white py-3 px-4 rounded-md hover:bg-accent transition-colors font-medium"
+                    >
+                        Calculate SGPA
+                    </button>
+                </form>
+
+            </div>
+            <div className="pt-6">
+                <div className="container mx-auto text-center pb-8">
+                    <p className="text-gray-400">
+                        Made with ❤️ by Amrendra
+                    </p>
+                </div>
+            </div>
+        </>
     );
 };
 

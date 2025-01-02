@@ -24,8 +24,8 @@ export default function ProtectedContent() {
     return (
         <div>
             {isSignedIn ? (
-                <div className="flex flex-col justify-center px-5 gap-x-2 items-center container mx-auto">
-                    <div className="flex items-center justify-center bg-white p-8 rounded-xl max-w-lg w-full">
+                <div className="flex flex-col justify-center gap-x-2 items-center container mx-auto">
+                    <div className="flex items-center justify-center bg-white pb-1.5 rounded-xl max-w-lg w-full">
                         {/* Profile Section */}
                         <div className="flex flex-col items-center mb-2">
                             <h2 className="text-2xl font-semibold bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">

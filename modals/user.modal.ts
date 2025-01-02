@@ -1,35 +1,32 @@
 import { model, models, Schema } from "mongoose";
 
-const userSchema = new Schema({
+const UserSchema = new Schema({
   clerkId: {
-    type: String, // Specify type using `type`
-    required: true, // Mark field as required
-    unique: true, // Ensure uniqueness
-  },
-  name: {
-    type: String, // Specify type using `type`
-    required: true, // Mark field as required
+    type: String, 
+    required: true, 
+    unique: true, 
   },
   email: {
-    type: String, // Specify type using `type`
-    required: true, // Mark field as required
+    type: String, 
+    required: true,
+    unique: true,
   },
   username: {
-    type: String, // Specify type using `type`
-    required: true, // Mark field as required
+    type: String, 
+    required: true, 
   },
   photo: {
-    type: String, // Optional field
+    type: String, 
+    required: true,
   },
   firstName: {
-    type: String, // Optional field
+    type: String, 
   },
   lastName: {
-    type: String, // Optional field
+    type: String, 
   },
 });
 
-// Check if the model already exists before creating it
-const User = models?.User || model("User", userSchema);
+const User = models?.User || model("User", UserSchema);
 
 export default User;

@@ -16,7 +16,7 @@ function Header() {
                 {/* Logo */}
                 <Link href="/">
                     <h1 className="text-4xl font-semibold cursor-pointer">
-                        Grader<span className="text-accent">.</span>
+                        GraderX<span className="text-accent">.</span>
                     </h1>
                 </Link>
 

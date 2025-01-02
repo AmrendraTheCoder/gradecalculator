@@ -1,4 +1,4 @@
-const MONGODB_URI = process.env.DATABASE_URL;
+const MONGODB_URL = process.env.DATABASE_URL;
 
 import mongoose, { Mongoose } from "mongoose";
 
@@ -23,7 +23,7 @@ export const connect = async () => {
 
   cached.promise =
     cached.promise ||
-    mongoose.connect(MONGODB_URI, {
+    mongoose.connect(MONGODB_URL, {
       dbName: "clerkAuth5",
       bufferCommands: false,
       connectTimeoutMS: 30000,

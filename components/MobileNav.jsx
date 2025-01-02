@@ -30,7 +30,7 @@ function MobileNav() {
                 <div className="mt-32 mb-20 text-center text-2xl">
                     <Link href="/">
                         <h1 className="text-4xl text-white font-semibold cursor-pointer">
-                            Grader<span className="text-accent">.</span>
+                            GraderX<span className="text-accent">.</span>
                         </h1>
                     </Link>
                 </div>

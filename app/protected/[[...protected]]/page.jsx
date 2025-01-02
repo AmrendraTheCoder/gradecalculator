@@ -1,7 +1,7 @@
 'use client';
 
-import GradeForm from '/components/GradeComponentForm';
-import { Button } from '/components/ui';
+import GradeForm from './components/GradeComponentForm';
+import { Button } from './components/ui';
 import { useUser, SignInButton, SignUpButton } from '@clerk/nextjs';
 import { useEffect, useState } from 'react';
 

@@ -2,7 +2,7 @@
 import { useState } from "react";
 import GradeResult from "./GradeResult"; // Import the GradeResult component
 
-const GradeForm = () => {
+const GradeFormFirstYear = () => {
     const [formData, setFormData] = useState({
         grades: {
             code: { grade: "" },
@@ -138,4 +138,4 @@ const GradeForm = () => {
     );
 };
 
-export default GradeForm;
+export default GradeFormFirstYear;

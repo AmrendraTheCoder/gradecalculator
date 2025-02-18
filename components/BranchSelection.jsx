@@ -3,9 +3,6 @@ const BranchSelection = ({ branches, onBranchSelect, onBack }) => {
         <div className="flex flex-col items-center gap-8">
             {/* Header Section */}
             <div className="text-center space-y-2">
-                <h3 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
-                    Select Your Branch
-                </h3>
                 <p className="text-gray-500">
                     Choose your engineering branch to continue
                 </p>
@@ -82,19 +79,6 @@ const BranchSelection = ({ branches, onBranchSelect, onBack }) => {
                         <span>Select your branch to view relevant courses</span>
                     </div>
                 </div>
-            </div>
-
-            {/* Current DateTime Display */}
-            <div className="absolute bottom-4 right-4 text-sm text-gray-400">
-                {new Date().toLocaleString('en-US', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    hour12: false
-                })}
             </div>
         </div>
     );

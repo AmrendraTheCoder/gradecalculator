@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { useUser, SignInButton, SignUpButton } from '@clerk/nextjs';
-import { Button } from '../../../components/ui/button';
-import GradeFormFirstYear from '../../../components/GradeComponentForm';
 import YearSelection from '../../../components/YearSelection';
 import SemesterSelection from '../../../components/SemesterSelection';
 import BranchSelection from '../../../components/BranchSelection';
@@ -16,6 +14,19 @@ const ProtectedContent = () => {
     const [selectedSemester, setSelectedSemester] = useState(null);
     const [selectedBranch, setSelectedBranch] = useState(null);
     const [currentDateTime, setCurrentDateTime] = useState('');
+
+    // Grade Calculator States
+    const [formData, setFormData] = useState({
+        grades: {
+            code: { grade: "" },
+            clp: { grade: "" },
+            pps: { grade: "" },
+            be: { grade: "" },
+            beLab: { grade: "" },
+            tce: { grade: "" },
+        },
+    });
+    const [result, setResult] = useState(null);
 
     // Year data structure with corresponding semesters
     const yearData = [
@@ -33,15 +44,30 @@ const ProtectedContent = () => {
         { id: 'ME', name: 'Mechanical Engineering', icon: '⚙️' }
     ];
 
+    // Grade Calculator Data
+    const subjects = [
+        { id: "code", name: "CODE" },
+        { id: "clp", name: "CLP" },
+        { id: "pps", name: "PPS" },
+        { id: "be", name: "BE" },
+        { id: "beLab", name: "BE LAB" },
+        { id: "tce", name: "TCE" },
+    ];
+
+    const grades = ["A", "AB", "B", "BC", "C", "CD", "D", "F"];
+
     useEffect(() => {
         if (isLoaded && !isSignedIn) {
             setShowAuthPrompt(true);
         }
 
-        // Update current date time
+        // Update current date time with the specified format
         const updateDateTime = () => {
             const now = new Date();
-            setCurrentDateTime(now.toISOString().slice(0, 19).replace('T', ' '));
+            const formattedDate = `Current Date and Time (UTC - YYYY-MM-DD HH:MM:SS formatted): ${now.toISOString()
+                .slice(0, 19)
+                .replace('T', ' ')}`;
+            setCurrentDateTime(formattedDate);
         };
 
         updateDateTime();
@@ -63,38 +89,206 @@ const ProtectedContent = () => {
             setSelectedBranch(null);
         } else if (selectedSemester !== null) {
             setSelectedSemester(null);
+            setResult(null);
+            setFormData({
+                grades: {
+                    code: { grade: "" },
+                    clp: { grade: "" },
+                    pps: { grade: "" },
+                    be: { grade: "" },
+                    beLab: { grade: "" },
+                    tce: { grade: "" },
+                },
+            });
         } else {
             setSelectedYear(null);
         }
     };
 
-    // Helper function to check if branch selection is needed
-    const needsBranchSelection = (year, semester) => {
-        return !(year === 1 && semester === 0);
+    const calculateGradePoints = (grade) => {
+        const gradePoints = {
+            A: 10, AB: 9, B: 8, BC: 7, C: 6, CD: 5, D: 4, F: 0,
+        };
+        return gradePoints[grade] || 0;
     };
 
+    const handleGradeChange = (subject, value) => {
+        setFormData((prev) => ({
+            ...prev,
+            grades: {
+                ...prev.grades,
+                [subject]: {
+                    grade: value,
+                },
+            },
+        }));
+    };
+
+    const handleCalculate = (e) => {
+        e.preventDefault();
+
+        const credits = {
+            code: 4,
+            clp: 4,
+            pps: 4.5,
+            be: 4,
+            beLab: 1.5,
+            tce: 3,
+        };
+
+        let totalPoints = 0;
+        let totalCredits = 21;
+
+        for (const subject in formData.grades) {
+            const creditHours = credits[subject];
+            const gradePoints = calculateGradePoints(formData.grades[subject].grade);
+            totalPoints += creditHours * gradePoints;
+        }
+
+        const calculatedCgpa = (totalPoints / totalCredits).toFixed(2);
+        setResult(calculatedCgpa);
+    };
+
+    const needsBranchSelection = (year, semester) => {
+        return !(Number(year) === 1 && Number(semester) === 0);
+    };
+
+    const GradeResult = ({ cgpa, onReset }) => (
+        <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
+            <div className="text-center space-y-6">
+                <h3 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r 
+                             from-blue-600 to-purple-600">
+                    Your SGPA
+                </h3>
+                <div className="text-5xl font-bold text-blue-600">{cgpa}</div>
+                <p className="text-gray-600">
+                    {parseFloat(cgpa) >= 7.5
+                        ? "Excellent performance! 🎉"
+                        : parseFloat(cgpa) >= 6.0
+                            ? "Good job! 👏"
+                            : "Keep working hard! 💪"}
+                </p>
+                <button
+                    onClick={onReset}
+                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white 
+                             py-3 px-4 rounded-md hover:opacity-90 transition-opacity font-medium"
+                >
+                    Calculate Again
+                </button>
+            </div>
+        </div>
+    );
+
     const renderMainContent = () => {
+        console.log('Current state:', { selectedYear, selectedSemester, selectedBranch });
+
         if (!selectedYear) {
             return (
                 <YearSelection
                     yearData={yearData}
-                    onYearSelect={(year) => setSelectedYear(year)}
+                    onYearSelect={(year) => {
+                        console.log('Setting year:', year);
+                        setSelectedYear(Number(year));
+                    }}
                 />
             );
         }
 
-        if (!selectedSemester) {
+        if (selectedYear && selectedSemester === null) {
             const yearInfo = yearData.find(y => y.year === selectedYear);
             return (
                 <SemesterSelection
                     yearInfo={yearInfo}
-                    onSemesterSelect={(semester) => setSelectedSemester(semester)}
+                    onSemesterSelect={(semester) => {
+                        console.log('Setting semester:', semester);
+                        setSelectedSemester(Number(semester));
+                    }}
                     onBack={handleBack}
                 />
             );
         }
 
-        // Check if branch selection is needed
+        if (Number(selectedYear) === 1 && Number(selectedSemester) === 0) {
+            console.log('Rendering first semester form');
+            return (
+                <div className="w-full">
+                    <div className="max-w-4xl mx-auto">
+                        <div className="flex flex-col items-center gap-8">
+                            <div className="text-center space-y-2">
+                                <h3 className="text-3xl font-bold text-transparent bg-clip-text 
+                                             bg-gradient-to-r from-blue-600 to-purple-600">
+                                    First Semester
+                                </h3>
+                                <p className="text-gray-500">Enter your grades to calculate SGPA</p>
+                            </div>
+                            <div className="w-full">
+                                <div className="flex justify-center w-full">
+                                    <button
+                                        onClick={handleBack}
+                                        className="mb-6 px-6 py-2 text-gray-600 hover:text-blue-600 
+                                 transition-colors duration-200 flex items-center gap-2"
+                                    >
+                                        <span>←</span> Back to Semester Selection
+                                    </button>
+                                </div>
+
+                                {result ? (
+                                    <GradeResult
+                                        cgpa={result}
+                                        onReset={() => setResult(null)}
+                                    />
+                                ) : (
+                                    <div className="max-w-md mx-auto p-6 bg-white rounded-lg outline-dashed 
+                                                outline-slate-400 outline-1 shadow-md">
+                                        <h2 className="text-2xl font-bold text-center mb-6 text-transparent 
+                                                   bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+                                            Enter your Grades
+                                        </h2>
+
+                                        <form onSubmit={handleCalculate} className="space-y-4">
+                                            {subjects.map((subject) => (
+                                                <div key={subject.id} className="space-y-2">
+                                                    <label className="block text-sm font-medium text-gray-700">
+                                                        {subject.name}
+                                                    </label>
+                                                    <div className="flex space-x-2">
+                                                        <select
+                                                            value={formData.grades[subject.id].grade}
+                                                            onChange={(e) =>
+                                                                handleGradeChange(subject.id, e.target.value)
+                                                            }
+                                                            className="w-full p-2 border rounded-md bg-white"
+                                                            required
+                                                        >
+                                                            <option value="">Select Grade</option>
+                                                            {grades.map((grade) => (
+                                                                <option key={grade} value={grade}>
+                                                                    {grade}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            ))}
+
+                                            <button
+                                                type="submit"
+                                                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 
+                                                         text-white py-3 px-4 rounded-md hover:opacity-90 
+                                                         transition-opacity font-medium"
+                                            >
+                                                Calculate SGPA
+                                            </button>
+                                        </form>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
         if (needsBranchSelection(selectedYear, selectedSemester) && !selectedBranch) {
             return (
                 <BranchSelection
@@ -105,36 +299,6 @@ const ProtectedContent = () => {
             );
         }
 
-        // First semester grade form (no branch selection needed)
-        if (selectedYear === 1 && selectedSemester === 0) {
-            return (
-                <div className="w-full">
-                    <div className="max-w-4xl mx-auto">
-                        <div className="flex flex-col items-center gap-8">
-                            <div className="text-center space-y-2">
-                                <h3 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r 
-                                             from-blue-600 to-purple-600">
-                                    First Semester
-                                </h3>
-                                <p className="text-gray-500">Enter your grades to calculate SGPA</p>
-                            </div>
-                            <div className="w-full">
-                                <button
-                                    onClick={handleBack}
-                                    className="mb-6 px-6 py-2 text-gray-600 hover:text-blue-600 
-                                             transition-colors duration-200 flex items-center gap-2"
-                                >
-                                    <span>←</span> Back to Semester Selection
-                                </button>
-                                <GradeFormFirstYear />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            );
-        }
-
-        // Other semesters with branch selected
         return (
             <div className="w-full flex flex-col items-center">
                 <button
@@ -177,6 +341,11 @@ const ProtectedContent = () => {
                                     <p>Branch: {branches.find(b => b.id === selectedBranch)?.name}</p>
                                 </div>
                             </div>
+                            <div className="mt-4 text-sm text-gray-500">
+                                {currentDateTime}
+                                <br />
+                                Current User's Login: {user?.username || 'AmrendraTheCoder'}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -196,10 +365,9 @@ const ProtectedContent = () => {
         <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
             {isSignedIn ? (
                 <div className="max-w-6xl mx-auto px-4 py-12">
-                    {/* Welcome Message */}
                     <div className="text-center mb-12 space-y-2">
                         <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r 
-                                     from-blue-600 to-purple-600">
+                                 from-blue-600 to-purple-600">
                             {!selectedYear ? 'Select Your Year' :
                                 !selectedSemester ? 'Select Your Semester' :
                                     needsBranchSelection(selectedYear, selectedSemester) && !selectedBranch ?
@@ -210,21 +378,21 @@ const ProtectedContent = () => {
                         </p>
                     </div>
 
-                    {/* Centered Breadcrumb */}
                     <div className="flex justify-center mb-12">
                         <Breadcrumb
                             yearInfo={yearData.find(y => y.year === selectedYear)}
                             selectedSemester={selectedSemester}
                             selectedBranch={selectedBranch}
-                            currentDateTime={currentDateTime}
-                            username={user?.username || 'AmrendraTheCoder'}
                         />
                     </div>
 
-                    {/* Main Content */}
                     <div className="mt-8">
                         {renderMainContent()}
                     </div>
+
+                    <footer className="mt-12 text-center text-sm text-gray-500">
+                        <p>Made with ❤️ by Amrendra</p>
+                    </footer>
                 </div>
             ) : showAuthPrompt ? (
                 <div className="flex flex-col items-center justify-center min-h-screen p-4">
@@ -238,16 +406,20 @@ const ProtectedContent = () => {
                         <div className="flex flex-col space-y-4">
                             <SignInButton>
                                 <button className="w-full py-3 px-6 bg-blue-600 hover:bg-blue-700 
-                                               text-white font-medium rounded-lg transition-colors">
+                                           text-white font-medium rounded-lg transition-colors">
                                     Login
                                 </button>
                             </SignInButton>
                             <SignUpButton>
                                 <button className="w-full py-3 px-6 bg-purple-600 hover:bg-purple-700 
-                                               text-white font-medium rounded-lg transition-colors">
+                                           text-white font-medium rounded-lg transition-colors">
                                     Sign Up
                                 </button>
                             </SignUpButton>
+                        </div>
+                        <div className="mt-8 text-center text-sm text-gray-500">
+                            <p>{currentDateTime}</p>
+                            <p>Current User's Login: AmrendraTheCoder</p>
                         </div>
                     </div>
                 </div>

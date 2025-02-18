@@ -89,44 +89,10 @@ const Breadcrumb = ({ yearInfo, selectedSemester, selectedBranch, currentDateTim
                         ))}
                     </div>
 
-                    {/* Mobile Info Footer */}
-                    <div className="mt-3 pt-3 border-t border-gray-100">
-                        <div className="flex flex-col space-y-2 text-xs text-gray-500">
-                            <div className="flex items-center justify-center space-x-2">
-                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                </svg>
-                                <span className="truncate">{username}</span>
-                            </div>
-                            <div className="flex items-center justify-center space-x-2">
-                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                <span className="text-[10px]">{currentDateTime}</span>
-                            </div>
-                        </div>
-                    </div>
+                    
                 </div>
 
-                {/* Desktop Info Footer */}
-                <div className="hidden sm:flex mt-4 pt-4 border-t border-gray-100 justify-between items-center text-xs text-gray-500">
-                    <div className="flex items-center space-x-2">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                        </svg>
-                        <span>{username}</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span>{currentDateTime}</span>
-                    </div>
-                </div>
+               
             </div>
         </div>
     );

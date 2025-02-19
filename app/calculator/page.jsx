@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useUser, SignInButton, SignUpButton } from '@clerk/nextjs';
 import YearSelection from '../../components/YearSelection';
 import SemesterSelection from '../../components/SemesterSelection';
 import BranchSelection from '../../components/BranchSelection';
@@ -9,8 +8,6 @@ import Breadcrumb from '../../components/Breadcrumb';
 import GradeResult from '../../components/GradeResult';
 
 const ProtectedContent = () => {
-    const { isLoaded, user, isSignedIn } = useUser();
-    const [showAuthPrompt, setShowAuthPrompt] = useState(false);
     const [selectedYear, setSelectedYear] = useState(null);
     const [selectedSemester, setSelectedSemester] = useState(null);
     const [selectedBranch, setSelectedBranch] = useState(null);
@@ -56,23 +53,19 @@ const ProtectedContent = () => {
 
     const grades = ["A", "AB", "B", "BC", "C", "CD", "D", "F"];
 
-    // Initialize date time and auth state
+    // Initialize date time
     useEffect(() => {
-        if (isLoaded && !isSignedIn) {
-            setShowAuthPrompt(true);
-        }
-
         const updateDateTime = () => {
             const now = new Date();
             const formattedDate = now.toISOString().slice(0, 19).replace('T', ' ');
             setCurrentDateTime(`Current Date and Time (UTC - YYYY-MM-DD HH:MM:SS formatted): ${formattedDate}`);
-            setUserLogin(`Current User's Login: ${user?.username || 'AmrendraTheCoder'}`);
+            setUserLogin(`Current User's Login: AmrendraTheCoder`);
         };
 
         updateDateTime();
         const interval = setInterval(updateDateTime, 1000);
         return () => clearInterval(interval);
-    }, [isLoaded, isSignedIn, user?.username]);
+    }, []);
 
     // Reset states on selection changes
     useEffect(() => {
@@ -302,10 +295,6 @@ const ProtectedContent = () => {
                                     <p>Branch: {branches.find(b => b.id === selectedBranch)?.name}</p>
                                 </div>
                             </div>
-                            <div className="mt-4 text-sm text-gray-500">
-                                <p>{currentDateTime}</p>
-                                <p>{userLogin}</p>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -313,69 +302,34 @@ const ProtectedContent = () => {
         );
     };
 
-    if (!isLoaded) {
-        return (
-            <div className="min-h-screen flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-            </div>
-        );
-    }
-
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
-            {isSignedIn ? (
-                <div className="max-w-6xl mx-auto px-4 py-12">
-                    <div className="text-center mb-12 space-y-2">
-                        <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r 
-                                     from-blue-600 to-purple-600">
-                            {!selectedYear ? 'Select Your Year' :
-                                !selectedSemester ? 'Select Your Semester' :
-                                    needsBranchSelection(selectedYear, selectedSemester) && !selectedBranch ?
-                                        'Select Your Branch' : 'Grade Calculator'}
-                        </h2>
-                        <p className="text-xl text-gray-600">
-                            Welcome, {user?.firstName || user?.username || 'AmrendraTheCoder'}!
-                        </p>
-                    </div>
-
-                    <div className="flex justify-center mb-12">
-                        <Breadcrumb
-                            yearInfo={yearData.find(y => y.year === selectedYear)}
-                            selectedSemester={selectedSemester}
-                            selectedBranch={selectedBranch}
-                        />
-                    </div>
-
-                    <div className="mt-8">
-                        {renderMainContent()}
-                    </div>
+            <div className="max-w-6xl mx-auto px-4 py-12">
+                <div className="text-center mb-12 space-y-2">
+                    <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r 
+                                 from-blue-600 to-purple-600">
+                        {!selectedYear ? 'Select Your Year' :
+                            !selectedSemester ? 'Select Your Semester' :
+                                needsBranchSelection(selectedYear, selectedSemester) && !selectedBranch ?
+                                    'Select Your Branch' : 'Grade Calculator'}
+                    </h2>
+                    <p className="text-xl text-gray-600">
+                        Welcome to SGPA Calculator!
+                    </p>
                 </div>
-            ) : showAuthPrompt ? (
-                <div className="flex flex-col items-center justify-center min-h-screen p-4">
-                    <div className="max-w-md w-full bg-white rounded-2xl shadow-lg p-8">
-                        <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">
-                            Welcome to SGPA Calculator
-                        </h2>
-                        <p className="text-lg text-gray-600 mb-8 text-center">
-                            Please sign in to access your grade calculator
-                        </p>
-                        ▋<div className="flex flex-col space-y-4">
-                            <SignInButton>
-                                <button className="w-full py-3 px-6 bg-blue-600 hover:bg-blue-700 
-                                               text-white font-medium rounded-lg transition-colors">
-                                    Login
-                                </button>
-                            </SignInButton>
-                            <SignUpButton>
-                                <button className="w-full py-3 px-6 bg-purple-600 hover:bg-purple-700 
-                                               text-white font-medium rounded-lg transition-colors">
-                                    Sign Up
-                                </button>
-                            </SignUpButton>
-                        </div>
-                    </div>
+
+                <div className="flex justify-center mb-12">
+                    <Breadcrumb
+                        yearInfo={yearData.find(y => y.year === selectedYear)}
+                        selectedSemester={selectedSemester}
+                        selectedBranch={selectedBranch}
+                    />
                 </div>
-            ) : null}
+
+                <div className="mt-8">
+                    {renderMainContent()}
+                </div>
+            </div>
         </div>
     );
 };

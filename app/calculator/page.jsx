@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import { useUser, SignInButton, SignUpButton } from '@clerk/nextjs';
-import YearSelection from '../../../components/YearSelection';
-import SemesterSelection from '../../../components/SemesterSelection';
-import BranchSelection from '../../../components/BranchSelection';
-import Breadcrumb from '../../../components/Breadcrumb';
-import GradeResult from '../../../components/GradeResult';
+import YearSelection from '../../components/YearSelection';
+import SemesterSelection from '../../components/SemesterSelection';
+import BranchSelection from '../../components/BranchSelection';
+import Breadcrumb from '../../components/Breadcrumb';
+import GradeResult from '../../components/GradeResult';
 
 const ProtectedContent = () => {
     const { isLoaded, user, isSignedIn } = useUser();

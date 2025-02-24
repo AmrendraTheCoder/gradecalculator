@@ -16,8 +16,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata = {
-  title: "Learning-Project",
-  description: "AuthViaClerk : Amrendra",
+  title: "GradeMaster",
+  description: "UniversalSGPA Calculator : Amrendra",
 };
 
 export default function RootLayout({ children }) {
